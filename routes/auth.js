@@ -1,15 +1,11 @@
 const express = require("express");
-const dirName = require("../utils/path");
-const path = require("path");
+
+const { postLogin, getLogin } = require("../controllers/auth");
 
 const router = express.Router();
 
-router.get("/login", (req, res, next) => {
-  res.status(200).sendFile(path.join(dirName, 'views', 'auth.html'));
-});
+router.get("/login", getLogin);
 
-router.post("/login", (req, res, next) => {
-  res.redirect("/chats");
-});
+router.post("/login", postLogin);
 
 module.exports = router;

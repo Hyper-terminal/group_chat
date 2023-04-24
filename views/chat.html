@@ -16,7 +16,8 @@
           <li class="main-header__item"><a href="/chats">Chats</a></li>
           <li class="main-header__item">
             <a class="active" href="/auth/login">Auth</a>
-          </li>  <li class="main-header__item">
+          </li>
+          <li class="main-header__item">
             <a class="active" href="/contact">Contact</a>
           </li>
         </ul>
@@ -33,6 +34,25 @@
     <script>
       // client-side JavaScript code
       const form = document.querySelector("form");
+
+      fetch("/chats/all-chats")
+        .then((response) => response.json())
+        .then((messages) => {
+          // Create a new element to hold the messages
+          messages = messages.split("\n");
+          const messagesContainer = document.createElement("div");
+
+          // Loop through the messages and create a new div for each one
+          messages.forEach((message) => {
+            const messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            messagesContainer.appendChild(messageElement);
+          });
+
+          // Insert the messages container before the form element
+          form.parentNode.insertBefore(messagesContainer, form);
+        });
+
       form.addEventListener("submit", (event) => {
         const messageInput = document.querySelector("input[name='message']");
         const message = messageInput.value;
