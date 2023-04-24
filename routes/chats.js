@@ -1,11 +1,13 @@
 const express = require("express");
 const fs = require("fs");
+const dirName = require("../utils/path");
 const path = require("path");
 
 const router = express.Router();
 
-const filePath = path.join(__dirname, "..", "text.txt");
-router.get("/", (req, res, next) => {
+const filePath = path.join(dirName, "text.txt");
+
+router.get("/", (req, res) => {
   fs.open(filePath, "a+", (err, fd) => {
     if (err) throw err;
     fs.readFile(fd, (err, data) => {
@@ -16,33 +18,24 @@ router.get("/", (req, res, next) => {
         messages = data.toString();
       }
 
-      res.status(200).send(
-        `<div id="messages">${messages}</div>
-          <form method="post" action="/chats">
-            <input type="text" name="message"/>
-            <button> send </button>
-          </form><script>
-        window.addEventListener("load", () => {
-            const messageDiv = document.querySelector("messages");
-            messageDiv.innerHTML = localStorage.getItem("message") + messageDiv.innerHTML;
-        })
-        </script>`
-      );
+      res.status(200).sendFile(path.join(dirName, "views", "chat.html"));
     });
   });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", (req, res) => {
+  console.log(req.body);
   const message = req.body.message;
+  const username = req.body.username;
 
-  fs.open(filePath, (err, data) => {
-    console.log(data);
+  fs.open(filePath, (err) => {
     if (!err) {
-      fs.appendFile(filePath, `${message}\n`, (err) => {
+      fs.appendFile(filePath, `${username}: ${message}\n`, (err) => {
         if (!err) {
+          res.redirect("/chats");
+        } else {
           console.log(err);
         }
-        res.redirect("/chats");
       });
     } else {
       console.log(err);

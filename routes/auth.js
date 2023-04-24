@@ -1,20 +1,11 @@
 const express = require("express");
+const dirName = require("../utils/path");
+const path = require("path");
 
 const router = express.Router();
 
 router.get("/login", (req, res, next) => {
-  res.status(200).send(
-    `<form method="post" action="/auth/login">
-        <input type="text" name="loginName"/>
-        <button> login </button>
-      </form>
-      <script>
-        document.querySelector('form').addEventListener('submit', (event) => {
-          let message = document.querySelector('input[name="message"]').value;
-          localStorage.setItem('message', message);
-        });
-      </script>`
-  );
+  res.status(200).sendFile(path.join(dirName, 'views', 'auth.html'));
 });
 
 router.post("/login", (req, res, next) => {
